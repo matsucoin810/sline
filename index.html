@@ -566,12 +566,25 @@ function closeMobile() {
 }
 
 // Scroll reveal
-var observer = new IntersectionObserver(function(entries) {
-  entries.forEach(function(entry) {
-    if (entry.isIntersecting) entry.target.classList.add('visible');
+try {
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
+  // Fallback: if elements are still hidden after 2s, force show
+  setTimeout(function() {
+    document.querySelectorAll('.reveal:not(.visible)').forEach(function(el) {
+      el.classList.add('visible');
+    });
+  }, 2000);
+} catch(e) {
+  // If IntersectionObserver not supported, show all
+  document.querySelectorAll('.reveal').forEach(function(el) {
+    el.classList.add('visible');
   });
-}, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
-document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
+}
 
 // Feature tag accordion
 var featureData = {
