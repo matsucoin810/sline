@@ -337,6 +337,37 @@ section { padding: clamp(4rem, 10vw, 8rem) clamp(1.5rem, 5vw, 4rem); }
 .cta-btn:hover svg { transform: translateX(4px); }
 .cta-sub { margin-top: 1.5rem; font-size: 0.7rem; color: var(--gray); }
 
+/* QR MODAL */
+.qr-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.6);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; visibility: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.qr-overlay.active { opacity: 1; visibility: visible; }
+.qr-modal {
+  background: #fff; padding: 2.5rem 2rem 2rem;
+  text-align: center; position: relative;
+  max-width: 340px; width: 90%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  cursor: default;
+}
+.qr-modal img { width: 220px; height: auto; margin-bottom: 1rem; }
+.qr-modal-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem; color: var(--gold);
+  letter-spacing: 0.1em; margin-bottom: 0.5rem;
+}
+.qr-modal-text { font-size: 0.75rem; color: var(--gray); line-height: 1.8; }
+.qr-close {
+  position: absolute; top: 0.8rem; right: 1rem;
+  background: none; border: none; font-size: 1.4rem;
+  color: var(--gray); cursor: pointer; line-height: 1;
+}
+.qr-close:hover { color: var(--text); }
+
 /* FOOTER */
 footer {
   padding: 3rem 2rem 2rem;
@@ -520,7 +551,7 @@ footer {
     </div>
     <div class="info-block reveal reveal-delay-2">
       <div class="info-block-title">Reservation</div>
-      <p>LINEで24時間ご予約可能です。<br>LINEからのご予約が優先となります。<br><br><a href="https://line.me/ti/p/Re3WBrmlcO" style="color:var(--gold);">&#9656; LINE友達追加はこちら</a></p>
+      <p>LINEで24時間ご予約可能です。<br>LINEからのご予約が優先となります。<br><br><a href="#" onclick="openQR();return false;" style="color:var(--gold);">&#9656; LINE友達追加はこちら</a></p>
     </div>
   </div>
   <div style="max-width:1000px; margin:2.5rem auto 0; text-align:center;" class="reveal">
@@ -536,12 +567,21 @@ footer {
   <div class="section-label reveal">RESERVATION</div>
   <h2 class="cta-title reveal reveal-delay-1">ご予約はLINEから</h2>
   <p class="cta-desc reveal reveal-delay-2">24時間いつでもご予約可能です。<br>お気軽にお問い合わせください。</p>
-  <a href="https://line.me/ti/p/Re3WBrmlcO" class="cta-btn reveal reveal-delay-3" id="lineBtn">
+  <a href="#" class="cta-btn reveal reveal-delay-3" id="lineBtn" onclick="openQR();return false;">
     LINEで予約する
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
   </a>
   <p class="cta-sub reveal reveal-delay-4">友達追加後、ご希望の日時をお送りください</p>
 </section>
+
+<div class="qr-overlay" id="qrOverlay">
+  <div class="qr-modal">
+    <button class="qr-close" id="qrClose">&times;</button>
+    <div class="qr-modal-title">LINE友達追加</div>
+    <img src="images/line-qr.jpg" alt="LINE QRコード">
+    <div class="qr-modal-text">QRコードを読み取って<br>友達追加してください</div>
+  </div>
+</div>
 
 <footer>
   <div class="footer-logo"><img src="images/logo.jpg" alt="S-line" style="height:50px;width:auto;"></div>
@@ -650,23 +690,18 @@ document.querySelectorAll('.feature-tag').forEach(function(tag) {
   });
 });
 
-// LINE button - PC opens new tab, mobile navigates directly
-var lineBtn = document.getElementById('lineBtn');
-if (lineBtn) {
-  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  if (!isMobile) {
-    lineBtn.setAttribute('target', '_blank');
-    lineBtn.setAttribute('rel', 'noopener');
-  }
+// QR Modal
+function openQR() {
+  document.getElementById('qrOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
 }
-document.querySelectorAll('a[href*="line.me"]').forEach(function(link) {
-  if (link.id !== 'lineBtn') {
-    var isMob = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (!isMob) {
-      link.setAttribute('target', '_blank');
-      link.setAttribute('rel', 'noopener');
-    }
-  }
+function closeQR() {
+  document.getElementById('qrOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+document.getElementById('qrClose').addEventListener('click', closeQR);
+document.getElementById('qrOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeQR();
 });
 </script>
 </body>
