@@ -520,7 +520,7 @@ footer {
     </div>
     <div class="info-block reveal reveal-delay-2">
       <div class="info-block-title">Reservation</div>
-      <p>LINEで24時間ご予約可能です。<br>LINEからのご予約が優先となります。<br><br><a href="https://line.me/ti/p/Re3WBrmlcO" target="_blank" rel="noopener" style="color:var(--gold);">&#9656; LINE友達追加はこちら</a></p>
+      <p>LINEで24時間ご予約可能です。<br>LINEからのご予約が優先となります。<br><br><a href="https://line.me/ti/p/Re3WBrmlcO" style="color:var(--gold);">&#9656; LINE友達追加はこちら</a></p>
     </div>
   </div>
   <div style="max-width:1000px; margin:2.5rem auto 0; text-align:center;" class="reveal">
@@ -536,7 +536,7 @@ footer {
   <div class="section-label reveal">RESERVATION</div>
   <h2 class="cta-title reveal reveal-delay-1">ご予約はLINEから</h2>
   <p class="cta-desc reveal reveal-delay-2">24時間いつでもご予約可能です。<br>お気軽にお問い合わせください。</p>
-  <a href="https://line.me/ti/p/Re3WBrmlcO" target="_blank" rel="noopener" class="cta-btn reveal reveal-delay-3">
+  <a href="https://line.me/ti/p/Re3WBrmlcO" class="cta-btn reveal reveal-delay-3" id="lineBtn">
     LINEで予約する
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
   </a>
@@ -584,14 +584,17 @@ try {
       if (entry.isIntersecting) entry.target.classList.add('visible');
     });
   }, { threshold: 0.1 });
-  // Mark elements for animation and start observing
   revealEls.forEach(function(el) {
     el.classList.add('will-animate');
     observer.observe(el);
   });
-} catch(e) {
-  // If observer fails, elements stay visible (default)
-}
+  // Safety fallback: force show after 3s if still hidden
+  setTimeout(function() {
+    document.querySelectorAll('.will-animate:not(.visible)').forEach(function(el) {
+      el.classList.add('visible');
+    });
+  }, 3000);
+} catch(e) {}
 
 // Feature tag accordion
 var featureData = {
@@ -637,4 +640,34 @@ document.querySelectorAll('.feature-tag').forEach(function(tag) {
       detail.classList.remove('open');
       currentFeature = null;
     } else {
-      // Open with new c
+      // Open with new content
+      this.classList.add('active');
+      title.textContent = featureData[key].title;
+      text.textContent = featureData[key].text;
+      detail.classList.add('open');
+      currentFeature = key;
+    }
+  });
+});
+
+// LINE button - PC opens new tab, mobile navigates directly
+var lineBtn = document.getElementById('lineBtn');
+if (lineBtn) {
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if (!isMobile) {
+    lineBtn.setAttribute('target', '_blank');
+    lineBtn.setAttribute('rel', 'noopener');
+  }
+}
+document.querySelectorAll('a[href*="line.me"]').forEach(function(link) {
+  if (link.id !== 'lineBtn') {
+    var isMob = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (!isMob) {
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'noopener');
+    }
+  }
+});
+</script>
+</body>
+</html>
