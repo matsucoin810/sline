@@ -351,9 +351,20 @@ footer {
 .footer-links a:hover { color: var(--gold); }
 .footer-copy { font-size: 0.6rem; color: rgba(0,0,0,0.25); letter-spacing: 0.1em; }
 
-/* SCROLL ANIMATIONS */
-.reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.25,0.46,0.45,0.94); }
-.reveal.visible { opacity: 1; transform: translateY(0); }
+/* SCROLL ANIMATIONS - visible by default, JS adds animate class */
+.reveal { 
+  opacity: 1; 
+  transform: translateY(0); 
+  transition: all 0.8s cubic-bezier(0.25,0.46,0.45,0.94); 
+}
+.reveal.will-animate { 
+  opacity: 0; 
+  transform: translateY(40px); 
+}
+.reveal.will-animate.visible { 
+  opacity: 1; 
+  transform: translateY(0); 
+}
 .reveal-delay-1 { transition-delay: 0.1s; }
 .reveal-delay-2 { transition-delay: 0.2s; }
 .reveal-delay-3 { transition-delay: 0.3s; }
@@ -565,25 +576,21 @@ function closeMobile() {
   document.body.style.overflow = '';
 }
 
-// Scroll reveal
+// Scroll reveal - only activate animation if observer works
 try {
+  var revealEls = document.querySelectorAll('.reveal');
   var observer = new IntersectionObserver(function(entries) {
     entries.forEach(function(entry) {
       if (entry.isIntersecting) entry.target.classList.add('visible');
     });
   }, { threshold: 0.1 });
-  document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
-  // Fallback: if elements are still hidden after 2s, force show
-  setTimeout(function() {
-    document.querySelectorAll('.reveal:not(.visible)').forEach(function(el) {
-      el.classList.add('visible');
-    });
-  }, 2000);
-} catch(e) {
-  // If IntersectionObserver not supported, show all
-  document.querySelectorAll('.reveal').forEach(function(el) {
-    el.classList.add('visible');
+  // Mark elements for animation and start observing
+  revealEls.forEach(function(el) {
+    el.classList.add('will-animate');
+    observer.observe(el);
   });
+} catch(e) {
+  // If observer fails, elements stay visible (default)
 }
 
 // Feature tag accordion
