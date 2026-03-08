@@ -547,7 +547,7 @@ footer {
     </div>
     <div class="info-block reveal reveal-delay-1">
       <div class="info-block-title">Contact</div>
-      <p>Tel：<a href="tel:03-6875-3138">03-6875-3138</a><br><br>Mail：<a href="/cdn-cgi/l/email-protection#2e5d034247404b1d1f1d166e415b5a4241414500445e"><span class="__cf_email__" data-cfemail="d4a7f9b8bdbab1e7e5e7ec94bba1a0b8bbbbbffabea4">[email&#160;protected]</span></a><br><br><span style="font-size:0.72rem;color:var(--gray);">※ 施術中はお電話に出られない場合がございます<br>LINEからのご予約をお願いいたします</span></p>
+      <p>Tel：<a href="tel:03-6875-3138">03-6875-3138</a><br><br>Mail：<a href="mailto:s-line3138@outlook.jp">s-line3138@outlook.jp</a><br><br><span style="font-size:0.72rem;color:var(--gray);">※ 施術中はお電話に出られない場合がございます<br>LINEからのご予約をお願いいたします</span></p>
     </div>
     <div class="info-block reveal reveal-delay-2">
       <div class="info-block-title">Reservation</div>
@@ -593,7 +593,7 @@ footer {
   <div class="footer-copy">&copy; 2024 S-line. All Rights Reserved.</div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 
 // Set images
 
@@ -697,4 +697,12 @@ function openQR() {
 }
 function closeQR() {
   document.getElementById('qrOverlay').classList.remove('active');
-  doc
+  document.body.style.overflow = '';
+}
+document.getElementById('qrClose').addEventListener('click', closeQR);
+document.getElementById('qrOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeQR();
+});
+</script>
+</body>
+</html>
