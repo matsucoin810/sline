@@ -39,7 +39,7 @@ body {
 
 /* NAV */
 nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  position: fixed; top: 0; left: 0; right: 0; z-index: 110;
   padding: 1.2rem 2rem;
   display: flex; align-items: center; justify-content: space-between;
   background: rgba(250,250,247,0.88);
@@ -65,7 +65,7 @@ nav.scrolled .nav-logo img { height: 32px; }
 .nav-links a:hover::after { width: 100%; }
 
 .hamburger {
-  display: none; cursor: pointer; z-index: 110;
+  display: none; cursor: pointer; z-index: 115;
   flex-direction: column; gap: 5px;
   background: none; border: none; padding: 8px;
 }
@@ -75,20 +75,30 @@ nav.scrolled .nav-logo img { height: 32px; }
 .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(4px,-4px); }
 
 .mobile-menu {
-  position: fixed; inset: 0; z-index: 105;
+  position: fixed; top: 0; left: 0; right: 0; z-index: 105;
   background: rgba(250,250,247,0.98);
+  backdrop-filter: blur(20px);
   display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 2rem;
-  opacity: 0; visibility: hidden; transition: all 0.5s;
+  align-items: center; gap: 0;
+  padding-top: 60px;
+  max-height: 0; overflow: hidden;
+  opacity: 0; visibility: hidden;
+  transition: max-height 0.4s ease, opacity 0.3s ease, visibility 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
 }
-.mobile-menu.active { opacity: 1; visibility: visible; }
+.mobile-menu.active { 
+  max-height: 100vh; opacity: 1; visibility: visible; 
+}
 .mobile-menu a {
   color: var(--text-soft); text-decoration: none;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.5rem; letter-spacing: 0.2em; font-weight: 300;
-  transition: color 0.3s;
+  font-size: 0.82rem; letter-spacing: 0.15em; font-weight: 300;
+  padding: 1rem 0;
+  width: 100%; text-align: center;
+  border-bottom: 1px solid rgba(184,151,106,0.1);
+  transition: color 0.3s, background 0.3s;
 }
-.mobile-menu a:hover { color: var(--gold); }
+.mobile-menu a:last-child { border-bottom: none; }
+.mobile-menu a:hover { color: var(--gold); background: rgba(184,151,106,0.05); }
 
 @media (max-width: 768px) {
   .nav-links { display: none; }
@@ -424,7 +434,7 @@ footer {
     <li><a href="#info">ACCESS</a></li>
     <li><a href="#reservation">RESERVATION</a></li>
   </ul>
-  <button class="hamburger" id="hamburger" aria-label="メニュー"><span></span><span></span><span></span></button>
+  <button class="hamburger" id="hamburger" aria-label="メニュー" onclick="toggleMenu()"><span></span><span></span><span></span></button>
 </nav>
 
 <div class="mobile-menu" id="mobileMenu">
@@ -594,29 +604,36 @@ footer {
 </footer>
 
 <script>
+// Hamburger menu
+function toggleMenu() {
+  var h = document.getElementById('hamburger');
+  var m = document.getElementById('mobileMenu');
+  h.classList.toggle('active');
+  m.classList.toggle('active');
+}
+function closeMobile() {
+  var h = document.getElementById('hamburger');
+  var m = document.getElementById('mobileMenu');
+  h.classList.remove('active');
+  m.classList.remove('active');
+}
 
-// Set images
+// QR Modal
+function openQR() {
+  document.getElementById('qrOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeQR() {
+  document.getElementById('qrOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
 
 // Nav scroll
 window.addEventListener('scroll', function() {
   document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
 });
 
-// Hamburger
-var hamburger = document.getElementById('hamburger');
-var mobileMenu = document.getElementById('mobileMenu');
-hamburger.addEventListener('click', function() {
-  hamburger.classList.toggle('active');
-  mobileMenu.classList.toggle('active');
-  document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
-});
-function closeMobile() {
-  hamburger.classList.remove('active');
-  mobileMenu.classList.remove('active');
-  document.body.style.overflow = '';
-}
-
-// Scroll reveal - only activate animation if observer works
+// Scroll reveal
 try {
   var revealEls = document.querySelectorAll('.reveal');
   var observer = new IntersectionObserver(function(entries) {
@@ -628,7 +645,6 @@ try {
     el.classList.add('will-animate');
     observer.observe(el);
   });
-  // Safety fallback: force show after 3s if still hidden
   setTimeout(function() {
     document.querySelectorAll('.will-animate:not(.visible)').forEach(function(el) {
       el.classList.add('visible');
@@ -638,67 +654,35 @@ try {
 
 // Feature tag accordion
 var featureData = {
-  sokkou: {
-    title: '即効性',
-    text: '1MHzの高周波が深部の脂肪を素早く温め、施術直後からサイズダウンを実感いただけます。大切な予定の前や、すぐに変化を感じたい方に最適です。'
-  },
-  onnetsu: {
-    title: '温熱効果',
-    text: '高周波の振動で体の内部からじんわり温まり、冷えて固まった脂肪を柔らかくほぐします。冷え性や肩こり・腰痛の緩和にも効果的で、施術中はリラクゼーション感覚をお楽しみいただけます。'
-  },
-  itami: {
-    title: '痛みなし',
-    text: 'ヘッド部分を肌の上で優しく滑らせる施術のため、痛みはなくマッサージを受けているような心地よさです。出力や圧の調節が可能なので、お好みに合わせた強さで安心して受けていただけます。'
-  },
-  cellulite: {
-    title: 'セルライトケア',
-    text: 'セルライトは老廃物と脂肪が固まったもので、通常のダイエットでは除去が難しい厄介な存在です。ハイパーナイフは冷えて固まった脂肪を温めてほぐし、リンパの流れを促進。老廃物の排出をサポートします。'
-  },
-  liftup: {
-    title: 'リフトアップ',
-    text: '高周波がお肌のコラーゲンやエラスチンに働きかけ、新しいコラーゲンの生成を促進します。お顔のたるみやシワが気になる部分もしっかり引き締め、ハリのある肌へと導きます。'
-  },
-  taisya: {
-    title: '代謝アップ',
-    text: '体の芯から温めることで血液やリンパの流れが改善し、基礎代謝のアップが期待できます。基礎代謝が上がると消費カロリーが増え、痩せやすい体質づくりにつながります。'
-  }
+  sokkou: { title: '即効性', text: '1MHzの高周波が深部の脂肪を素早く温め、施術直後からサイズダウンを実感いただけます。大切な予定の前や、すぐに変化を感じたい方に最適です。' },
+  onnetsu: { title: '温熱効果', text: '高周波の振動で体の内部からじんわり温まり、冷えて固まった脂肪を柔らかくほぐします。冷え性や肩こり・腰痛の緩和にも効果的で、施術中はリラクゼーション感覚をお楽しみいただけます。' },
+  itami: { title: '痛みなし', text: 'ヘッド部分を肌の上で優しく滑らせる施術のため、痛みはなくマッサージを受けているような心地よさです。出力や圧の調節が可能なので、お好みに合わせた強さで安心して受けていただけます。' },
+  cellulite: { title: 'セルライトケア', text: 'セルライトは老廃物と脂肪が固まったもので、通常のダイエットでは除去が難しい厄介な存在です。ハイパーナイフは冷えて固まった脂肪を温めてほぐし、リンパの流れを促進。老廃物の排出をサポートします。' },
+  liftup: { title: 'リフトアップ', text: '高周波がお肌のコラーゲンやエラスチンに働きかけ、新しいコラーゲンの生成を促進します。お顔のたるみやシワが気になる部分もしっかり引き締め、ハリのある肌へと導きます。' },
+  taisya: { title: '代謝アップ', text: '体の芯から温めることで血液やリンパの流れが改善し、基礎代謝のアップが期待できます。基礎代謝が上がると消費カロリーが増え、痩せやすい体質づくりにつながります。' }
 };
-
 var currentFeature = null;
 document.querySelectorAll('.feature-tag').forEach(function(tag) {
   tag.addEventListener('click', function() {
     var key = this.getAttribute('data-feature');
     var detail = document.getElementById('featureDetail');
-    var title = document.getElementById('featureTitle');
-    var text = document.getElementById('featureText');
-
-    // Remove active from all tags
+    var titleEl = document.getElementById('featureTitle');
+    var textEl = document.getElementById('featureText');
     document.querySelectorAll('.feature-tag').forEach(function(t) { t.classList.remove('active'); });
-
     if (currentFeature === key) {
-      // Close if same tag clicked
       detail.classList.remove('open');
       currentFeature = null;
     } else {
-      // Open with new content
       this.classList.add('active');
-      title.textContent = featureData[key].title;
-      text.textContent = featureData[key].text;
+      titleEl.textContent = featureData[key].title;
+      textEl.textContent = featureData[key].text;
       detail.classList.add('open');
       currentFeature = key;
     }
   });
 });
 
-// QR Modal
-function openQR() {
-  document.getElementById('qrOverlay').classList.add('active');
-  document.body.style.overflow = 'hidden';
-}
-function closeQR() {
-  document.getElementById('qrOverlay').classList.remove('active');
-  document.body.style.overflow = '';
-}
+// QR overlay close handlers
 document.getElementById('qrClose').addEventListener('click', closeQR);
 document.getElementById('qrOverlay').addEventListener('click', function(e) {
   if (e.target === this) closeQR();
